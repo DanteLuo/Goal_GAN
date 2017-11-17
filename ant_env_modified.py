@@ -3,15 +3,19 @@ from rllab.envs.base import Step
 import numpy as np
 
 
-class AntEnvModified(AntEnv):
+class AntEnvMod(AntEnv):
     '''
     Modified the output of the observation and the done criterion
     '''
 
-    def __init__(self, goal, epsilon=0.1, *args, **kwargs):
+    def __init__(self, goal=None, m=0.1, *args, **kwargs):
+
+        if goal is None:
+            print('Please specify goal for the agent!')
+            return
         self.goal  = goal
-        self.__epsilon = epsilon
-        super(AntEnvModified, self).__init__(*args, **kwargs)
+        self.__m = m
+        super(AntEnvMod, self).__init__(*args, **kwargs)
 
 
     def _distance_to_goal(self):
@@ -40,7 +44,7 @@ class AntEnvModified(AntEnv):
 
 
     def step(self, action):
-        ob, _, _, _ = super(AntEnvModified,self).step(action)
+        ob, _, _, _ = super(AntEnvMod,self).step(action)
 
         # adding extra state
         d_to_goal = self._distance_to_goal()
@@ -48,12 +52,12 @@ class AntEnvModified(AntEnv):
         vec_to_goal = self._vector_to_goal()
         ob = np.append(ob, [self.goal[0],self.goal[1],
                             vec_to_goal[0],vec_to_goal[1],d_to_goal])
-
-        reward = 0.
+        x, y = self.get_body_com("torso")[:2]
+        reward = 0
         done = False
-        if d_to_goal < self.__epsilon:
-            reward = 1.
+        if abs(x)<5*self.__m and abs(y)<5*self.__m:
+            reward = 1
             done = True
 
-        return Step(ob,reward,done)
+        return Step(ob,float(reward),done)
 
