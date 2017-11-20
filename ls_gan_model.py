@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+import os
 
 
 class LSGAN():
@@ -103,6 +104,17 @@ class LSGAN():
                 print(samples)
 
             self.iteration += 1
+
+    def save_model(self, path=None):
+        if path == None:
+            path = os.getcwd()+"/model/"
+
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+        saver = tf.train.Saver()
+        save_path = saver.save(sess=self.sess,save_path=path)
+        print("Model saved in file: %s" % save_path)
 
     def close_session(self):
         self.sess.close()
