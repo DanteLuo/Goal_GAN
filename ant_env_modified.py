@@ -44,13 +44,16 @@ class AntEnvMod(AntEnv):
 
 
     def step(self, action):
-        ob, _, _, _ = super(AntEnvMod,self).step(action)
+        full_obs, _, _, _ = super(AntEnvMod,self).step(action)
+
+        next_obs = full_obs[:29]  # robot position and velocity
+        next_obs = np.append(next_obs, full_obs[-3:])  # robot CoM
 
         # adding extra state
         d_to_goal = self._distance_to_goal()
         ## the vector to goal is two dimensional or three dimensional
         vec_to_goal = self._vector_to_goal()
-        ob = np.append(ob, [self.goal[0],self.goal[1],
+        next_obs = np.append(next_obs, [self.goal[0],self.goal[1],
                             vec_to_goal[0],vec_to_goal[1],d_to_goal])
         x, y = self.get_body_com("torso")[:2]
         reward = 0
@@ -59,5 +62,5 @@ class AntEnvMod(AntEnv):
             reward = 1
             done = True
 
-        return Step(ob,float(reward),done)
+        return Step(next_obs,float(reward),done)
 
