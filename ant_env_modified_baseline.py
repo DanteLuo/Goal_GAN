@@ -3,23 +3,28 @@ from rllab.envs.base import Step
 from rllab import spaces
 from cached_property import cached_property
 from rllab.misc.overrides import overrides
+from uniform_sampler import UniformSampler
+from rllab.core.serializable import Serializable
 import numpy as np
 
 
-class AntEnvMod(AntEnv):
+class AntEnvModBase(AntEnv, Serializable):
     '''
     Modified the output of the observation and the done criterion
     '''
 
-    def __init__(self, goal_space=[5,5], scaling=5, m=0.5, *args, **kwargs):
+    def __init__(self, seed=42, goal_space=[1,1], scaling=5, m=0.5, is_l2=False, num_goals=10, *args, **kwargs):
         self.__m = m
         self.goal_space = goal_space
         self.scaling = scaling
-        self.is_l2 = False
-        self.goal = [5,5]
-
-        super(AntEnvMod, self).__init__(*args, **kwargs)
-
+        self.seed = seed
+        self.is_l2 = is_l2
+        self.num_goals = num_goals
+        np.random.seed(seed)
+        self.goal_set = UniformSampler(self,is_maze=False).sample_goals(num_goals)
+        super(AntEnvModBase, self).__init__(*args, **kwargs)
+        Serializable.quick_init(self, locals())
+        self.reset()
 
     def _distance_to_goal(self):
         '''
@@ -49,14 +54,6 @@ class AntEnvMod(AntEnv):
         return spaces.Box(ub * -1, ub)
 
 
-    def set_goal(self, new_goal):
-        self.goal = new_goal
-
-
-    def turn_l2_rew(self, is_l2=True):
-        self.is_l2 = is_l2
-
-
     def _get_current_obs(self,full_obs):
         next_obs = full_obs[:29]  # robot position and velocity
         next_obs = np.append(next_obs, full_obs[-3:])  # robot CoM
@@ -70,7 +67,7 @@ class AntEnvMod(AntEnv):
 
 
     def step(self, action):
-        full_obs, _, _, _ = super(AntEnvMod,self).step(action)
+        full_obs, _, _, _ = super(AntEnvModBase,self).step(action)
 
         next_obs = self._get_current_obs(full_obs)
         x, y = self.get_body_com("torso")[:2]
@@ -80,11 +77,13 @@ class AntEnvMod(AntEnv):
             reward = 1
             done = True
 
-        return Step(next_obs,float(reward),done)
+        return Step(next_obs,float(reward),done,kwards1=self.goal)
 
 
     def reset(self, init_state=None):
-        full_obs = super(AntEnvMod,self).reset()
+        np.random.seed(None)
+        self.goal = self.goal_set[np.random.choice(self.num_goals),:]
+        full_obs = super(AntEnvModBase,self).reset()
         corp_obs = self._get_current_obs(full_obs)
 
         return corp_obs

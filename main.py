@@ -1,4 +1,4 @@
-from ant_env_modified import AntEnvMod
+from ant_env_modified_baseline import AntEnvMod
 from rllab.envs.normalized_env import normalize
 from sandbox.rocky.tf.envs.base import TfEnv
 from sandbox.rocky.tf.algos.trpo import TRPO
@@ -13,14 +13,15 @@ import tensorflow as tf
 # stub(globals())
 # ext.set_seed(1)
 
-env = TfEnv(normalize(AntEnvMod()))
-sampler = UniformSampler(env=env,is_maze=False)
-goals = sampler.sample_goals(1)
-print(goals)
-env.wrapped_env.wrapped_env.set_goal(goals)
+env = TfEnv(normalize(AntEnvMod(seed=42)))
+# sampler = UniformSampler(env=env.wrapped_env.wrapped_env,is_maze=False)
+# goals = sampler.sample_goals(1)
+# print(goals[0])
+# env.wrapped_env.wrapped_env.set_goal(goals[0])
 
 policy = GaussianMLPPolicy(name='policy',
-                           env_spec=env.spec)
+                           env_spec=env.spec,
+                           hidden_nonlinearity=tf.nn.tanh)
 
 baseline = LinearFeatureBaseline(env_spec=env.spec)
 
@@ -30,8 +31,8 @@ algo = TRPO(env=env,
             n_itr=2,
             max_path_length=5,
             discount=0.998,
-            gae_lambda=0.995)
-
+            gae_lambda=0.995,
+            force_batch_sampler=False)
 
 
 sess = tf.Session()

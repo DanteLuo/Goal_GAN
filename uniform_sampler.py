@@ -1,4 +1,3 @@
-from ant_maze_modified import AntMazeEnvMod
 import numpy as np
 
 
@@ -10,12 +9,12 @@ class UniformSampler():
         '''
         self.goal_space = {}
         if is_maze:
-            self._get_goal_set(env.wrapped_env.wrapped_env.MAZE_STRUCTURE)
-            self.scaling = env.wrapped_env.wrapped_env.MAZE_SIZE_SCALING
-            self.env_size = np.array(env.wrapped_env.wrapped_env.MAZE_STRUCTURE).shape
+            self._get_goal_set(env.MAZE_STRUCTURE)
+            self.scaling = env.MAZE_SIZE_SCALING
+            self.env_size = np.array(env.MAZE_STRUCTURE).shape
         else: # free space case
             self.goal_space[(0,0)] = 'g'
-            self.scaling = env.wrapped_env.wrapped_env.scaling
+            self.scaling = env.scaling
             self.env_size = [1,1]
 
     def _get_goal_set(self, structure):
