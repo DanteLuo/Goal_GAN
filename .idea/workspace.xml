@@ -2,12 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2095daa5-6b67-408f-a44e-1a3f1edc00dd" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ant_maze_modified.py" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/ant_env_modified.py" afterPath="$PROJECT_DIR$/ant_env_modified_baseline.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Env_test.py" afterPath="$PROJECT_DIR$/Env_test.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/OtherTest.py" afterPath="$PROJECT_DIR$/OtherTest.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.py" afterPath="$PROJECT_DIR$/main.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/uniform_sampler.py" afterPath="$PROJECT_DIR$/uniform_sampler.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -159,7 +155,6 @@
         <option value="$USER_HOME$/Packages/rllab/rllab/envs/mujoco/maze/maze_env.py" />
         <option value="$PROJECT_DIR$/OtherTest.py" />
         <option value="$PROJECT_DIR$/main.py" />
-        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/ant_maze_modified.py" />
         <option value="$PROJECT_DIR$/ant_env_modified.py" />
         <option value="$USER_HOME$/Packages/rllab/rllab/core/serializable.py" />
@@ -167,6 +162,7 @@
         <option value="$PROJECT_DIR$/Env_test.py" />
         <option value="$PROJECT_DIR$/ant_env_modified_baseline.py" />
         <option value="$PROJECT_DIR$/ant_maze_modified_baseline.py" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -615,14 +611,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="3" column="6" lean-forward="true" selection-start-line="3" selection-start-column="6" selection-end-line="3" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/uniform_sampler.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-40">
@@ -673,6 +661,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="342">
           <caret line="259" column="85" lean-forward="false" selection-start-line="259" selection-start-column="65" selection-end-line="259" selection-end-column="85" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" column="6" lean-forward="false" selection-start-line="3" selection-start-column="6" selection-end-line="3" selection-end-column="6" />
           <folding />
         </state>
       </provider>
