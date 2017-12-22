@@ -13,12 +13,12 @@ class LSGAN():
         self.h1_dim_d = 256
         self.h2_dim_d = 256
 
-        self.scaling = 5
+        self.scaling = 6
         self.iteration = 0
 
-        self.X = tf.placeholder(tf.float64, shape=[None, self.goal_dim])
-        self.Y = tf.placeholder(tf.float64, shape=[None, 1])
-        self.Z = tf.placeholder(tf.float64, shape=[None, self.z_dim])
+        self.X = tf.placeholder(tf.float64, shape=[None, self.goal_dim],name='GAN_X')
+        self.Y = tf.placeholder(tf.float64, shape=[None, 1],name='GAN_Y')
+        self.Z = tf.placeholder(tf.float64, shape=[None, self.z_dim],name='GAN_Z')
 
         with tf.variable_scope('G'):
             W1 = tf.get_variable(name='W1', shape=[self.z_dim, self.h1_dim_g], dtype=tf.float64,
@@ -68,7 +68,7 @@ class LSGAN():
             out = tf.matmul(h2, self.theta_D[2]) + self.theta_D[5]
         return out
 
-    def build_model(self, lr=0.001):
+    def build_model(self, lr=0.001, sess=None):
         self.G_sample = self.generator(self.Z)
 
         self.D_real = self.discriminator(self.X)
@@ -82,8 +82,11 @@ class LSGAN():
         self.D_solver = tf.train.AdamOptimizer(learning_rate=lr).minimize(self.D_loss, var_list=self.theta_D)
         self.G_solver = tf.train.AdamOptimizer(learning_rate=lr).minimize(self.G_loss, var_list=self.theta_G)
 
-        self.sess = tf.Session()
-        self.sess.run(tf.global_variables_initializer())
+        if sess == None:
+            self.sess = tf.Session()
+        else:
+            self.sess = sess
+        # self.sess.run(tf.global_variables_initializer())
 
     def train(self, x_real, y_real, num_x_fake, num_iterations=200):
         for it in range(num_iterations):
@@ -105,6 +108,11 @@ class LSGAN():
 
             self.iteration += 1
 
+    def sample_goals(self,num_goals):
+        z_mb = self.sample_z(num_goals)
+        goals = self.sess.run(self.G_sample,feed_dict={self.Z: z_mb})
+        return goals
+
     def save_model(self, path=None):
         if path == None:
             path = os.getcwd()+"/model/"
@@ -118,5 +126,3 @@ class LSGAN():
 
     def close_session(self):
         self.sess.close()
-
-

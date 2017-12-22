@@ -3,7 +3,7 @@ from rllab.envs.base import Step
 from rllab import spaces
 from cached_property import cached_property
 from rllab.misc.overrides import overrides
-from uniform_sampler import UniformSampler
+from utils import UniformSampler
 from rllab.core.serializable import Serializable
 import numpy as np
 
@@ -13,18 +13,22 @@ class AntEnvModBase(AntEnv, Serializable):
     Modified the output of the observation and the done criterion
     '''
 
-    def __init__(self, seed=42, goal_space=[1,1], scaling=5, m=0.5, is_l2=False, num_goals=10, *args, **kwargs):
+    def __init__(self, seed=42, goals=None, is_baseline=True, goal_space=[1,1], scaling=10, m=0.5, is_l2=False, num_goals=12, *args, **kwargs):
         self.__m = m
         self.goal_space = goal_space
         self.scaling = scaling
         self.seed = seed
         self.is_l2 = is_l2
         self.num_goals = num_goals
+        self.goal = [1,0]
         np.random.seed(seed)
-        self.goal_set = UniformSampler(self,is_maze=False).sample_goals(num_goals)
+        if is_baseline:
+            self.goal_set = UniformSampler(self,is_maze=False).sample_goals(num_goals)
+        else:
+            self.goal_set = goals
+        self.reset()
         super(AntEnvModBase, self).__init__(*args, **kwargs)
         Serializable.quick_init(self, locals())
-        self.reset()
 
     def _distance_to_goal(self):
         '''
@@ -46,6 +50,9 @@ class AntEnvModBase(AntEnv, Serializable):
         comvel = self.get_body_comvel("torso")
         return np.array([(self.goal[0]-comvel[0]),(self.goal[1]-comvel[1])])
 
+
+    def set_goal_id(self,goal_id):
+        self.goal = self.goal_set[goal_id]
 
     @cached_property
     @overrides
@@ -72,19 +79,20 @@ class AntEnvModBase(AntEnv, Serializable):
         next_obs = self._get_current_obs(full_obs)
         x, y = self.get_body_com("torso")[:2]
         reward = 0
+        reward_l2 = 0
         done = False
         if abs(x-self.goal[0])<self.__m and abs(y-self.goal[1])<self.__m:
             reward = 1
+            reward_l2 = 1
             done = True
+        if self.is_l2:
+            reward = -self._distance_to_goal()
 
-        return Step(next_obs,float(reward),done,kwards1=self.goal)
+        return Step(next_obs,float(reward),done,info=reward_l2)
 
 
     def reset(self, init_state=None):
-        np.random.seed(None)
-        self.goal = self.goal_set[np.random.choice(self.num_goals),:]
         full_obs = super(AntEnvModBase,self).reset()
         corp_obs = self._get_current_obs(full_obs)
-
+        self.goal = self.goal_set[np.random.choice(self.num_goals), :]
         return corp_obs
-
