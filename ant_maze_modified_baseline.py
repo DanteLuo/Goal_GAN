@@ -27,7 +27,6 @@ class AntMazeEnvModBase(MazeEnv, Serializable):
     MANUAL_COLLISION = False
 
     def __init__(self, goals=None, is_baseline=True, num_goals=12, is_l2=False, *args, **kwargs):
-        Serializable.quick_init(self, locals())
 
         Serializable.quick_init(self, locals())
         self.is_l2 = is_l2
